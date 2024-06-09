@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Map;
 {{/fullJavaUtil}}
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 {{>generatedAnnotation}}
 {{#operations}}
 public class {{classname}} {
+  private static final Logger LOGGER = Logger.getLogger({{classname}}.class.getName());
   private ApiClient {{localVariablePrefix}}apiClient;
 
   public {{classname}}() {
@@ -49,7 +53,7 @@ public class {{classname}} {
    * {{summary}}
    * {{notes}}
    {{#parameters}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
    {{/parameters}}
    {{#returnType}}
    * @return {{returnType}}
@@ -79,6 +83,11 @@ public class {{classname}} {
     // create path and map variables
     String {{localVariablePrefix}}localVarPath = "{{{path}}}"{{#pathParams}}
       .replaceAll("\\{" + "{{baseName}}" + "\\}", {{localVariablePrefix}}apiClient.escapeString({{{paramName}}}.toString())){{/pathParams}};
+    {{#pathParams}}
+    {{#deprecated}}
+    LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+    {{/deprecated}}
+    {{/pathParams}}
 
     // query params
     {{javaUtilPrefix}}List<Pair> {{localVariablePrefix}}localVarQueryParams = new {{javaUtilPrefix}}ArrayList<Pair>();
@@ -87,11 +96,20 @@ public class {{classname}} {
 
     {{#queryParams}}
     {{localVariablePrefix}}localVarQueryParams.addAll({{localVariablePrefix}}apiClient.parameterToPairs("{{#collectionFormat}}{{{collectionFormat}}}{{/collectionFormat}}", "{{baseName}}", {{paramName}}));
+    {{#deprecated}}
+    if ({{paramName}} != null) {
+      LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+    }
+    {{/deprecated}}
     {{/queryParams}}
 
     {{#headerParams}}
-    if ({{paramName}} != null)
+    if ({{paramName}} != null) {
       {{localVariablePrefix}}localVarHeaderParams.put("{{baseName}}", {{localVariablePrefix}}apiClient.parameterToString({{paramName}}));
+      {{#deprecated}}
+      LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+      {{/deprecated}}
+    }      
     {{/headerParams}}
     {{#isForm}}
     {{#formParams}}
