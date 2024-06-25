@@ -2426,6 +2426,9 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
         codegenParameter.baseName = parameter.getName();
         codegenParameter.description = escapeText(parameter.getDescription());
         codegenParameter.unescapedDescription = parameter.getDescription();
+        if (parameter.getDeprecated() != null) {
+            codegenParameter.deprecated = parameter.getDeprecated();
+        }
         if (parameter.getRequired() != null) {
             codegenParameter.required = parameter.getRequired();
         }
