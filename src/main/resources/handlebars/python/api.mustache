@@ -11,6 +11,7 @@ import six
 
 from {{packageName}}.api_client import ApiClient
 
+from typing_extensions import deprecated
 
 {{#operations}}
 class {{classname}}(object):
@@ -27,6 +28,9 @@ class {{classname}}(object):
 {{#operation}}
 {{#contents}}
 
+    {{#if ../vendorExtensions.x-is-deprecated}}
+    @deprecated("You are using a deprecated API operation: {{operationId}}")
+    {{/if}}
     def {{operationId}}(self, {{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs):  # noqa: E501
         """{{#summary}}{{{.}}}{{/summary}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
@@ -50,6 +54,9 @@ class {{classname}}(object):
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
                  returns the request thread.
+        {{#if ../vendorExtensions.x-is-deprecated}}
+        deprecated
+        {{/if}}
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
@@ -58,6 +65,9 @@ class {{classname}}(object):
             (data) = self.{{operationId}}_with_http_info({{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs)  # noqa: E501
             return data
 
+    {{#if ../vendorExtensions.x-is-deprecated}}
+    @deprecated("You are using a deprecated API operation: {{operationId}}_with_http_info")
+    {{/if}}
     def {{operationId}}_with_http_info(self, {{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs):  # noqa: E501
         """{{#summary}}{{{.}}}{{/summary}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
@@ -81,6 +91,9 @@ class {{classname}}(object):
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
                  returns the request thread.
+        {{#if ../vendorExtensions.x-is-deprecated}}
+        deprecated
+        {{/if}}
         """
 
         all_params = [{{#parameters}}'{{paramName}}'{{#hasMore}}, {{/hasMore}}{{/parameters}}]  # noqa: E501
