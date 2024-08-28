@@ -51,9 +51,9 @@ public class {{classname}} {
    * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/parameters}}{{#returnType}}
    * @return {{{returnType}}}{{/returnType}}
    * @throws ApiException if fails to make API call
-   {{#vendorExtension.x-is-enum}}
-   * @deprecated
-   {{/vendorExtension.x-is-enum}}
+   {{#vendorExtensions.x-is-deprecated}}
+   * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id~}} } instead{{/vendorExtensions.x-alternative-operation-id}}
+   {{/vendorExtensions.x-is-deprecated}}
    {{#externalDocs}}
    * {{description}}
    * @see <a href="{{url}}">{{summary}} Documentation</a>
