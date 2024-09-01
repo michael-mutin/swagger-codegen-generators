@@ -2078,7 +2078,6 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
                         String altOpId = getOrGenerateOperationId(altOpOperation, altOpPathname, altOpHttpMethod);
                         final String altOpIdFieldName = "x-alternative-operation-id";
                         codegenOperation.getVendorExtensions().put(altOpIdFieldName, altOpId);
-                        System.out.println("5"); // TODO: remove
                     }
                 }
             }
