@@ -2031,7 +2031,10 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
         }
 
         final String altOpFieldName = "x-alternative-operation";
-        Object altOpObj = operation.getExtensions().get(altOpFieldName);
+        Object altOpObj = null;;
+        if (operation.getExtensions() != null) {
+            altOpObj = operation.getExtensions().get(altOpFieldName);
+        }
         if (altOpObj != null && altOpObj instanceof String) {
             String alternativeOperation = (String) altOpObj;
             // Format: #/paths/{path}/{operation}
@@ -2071,11 +2074,11 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
                             altOpOperation = null;
                             break;
                     }
-
                     if (altOpOperation != null) {
                         String altOpId = getOrGenerateOperationId(altOpOperation, altOpPathname, altOpHttpMethod);
                         final String altOpIdFieldName = "x-alternative-operation-id";
                         codegenOperation.getVendorExtensions().put(altOpIdFieldName, altOpId);
+                        System.out.println("5"); // TODO: remove
                     }
                 }
             }
