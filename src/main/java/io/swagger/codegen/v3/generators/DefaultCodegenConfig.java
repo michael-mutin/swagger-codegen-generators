@@ -2076,6 +2076,15 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
                     }
                     if (altOpOperation != null) {
                         String altOpId = getOrGenerateOperationId(altOpOperation, altOpPathname, altOpHttpMethod);
+                        // remove prefix in operationId
+                        if (removeOperationIdPrefix) {
+                            int offset = altOpId.indexOf('_');
+                            if (offset > -1) {
+                                altOpId = altOpId.substring(offset + 1);
+                            }
+                        }
+                        altOpId = removeNonNameElementToCamelCase(altOpId);
+                        altOpId = toOperationId(altOpId);
                         final String altOpIdFieldName = "x-alternative-operation-id";
                         codegenOperation.getVendorExtensions().put(altOpIdFieldName, altOpId);
                     }
