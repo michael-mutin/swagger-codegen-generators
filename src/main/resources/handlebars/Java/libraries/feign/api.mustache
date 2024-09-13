@@ -27,16 +27,22 @@ public interface {{classname}} extends ApiClient.Api {
    * {{summary}}
    * {{notes}}
    {{#parameters}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
    {{/parameters}}
    {{#returnType}}
    * @return {{returnType}}
    {{/returnType}}
+   {{#vendorExtensions.x-is-deprecated}}
+   * @deprecated
+   {{/vendorExtensions.x-is-deprecated}}
    {{#externalDocs}}
    * {{description}}
    * @see <a href="{{url}}">{{summary}} Documentation</a>
    {{/externalDocs}}
    */
+  {{#vendorExtensions.x-is-deprecated}}
+  @Deprecated
+  {{/vendorExtensions.x-is-deprecated}}
   @RequestLine("{{httpMethod}} {{{path}}}{{#hasQueryParams}}?{{/hasQueryParams}}{{#queryParams}}{{baseName}}={{braces "left"}}{{paramName}}{{braces "right"}}{{#has this 'more'}}&{{/has}}{{/queryParams}}")
   @Headers({
   {{#vendorExtensions.x-contentType}}
@@ -65,23 +71,29 @@ public interface {{classname}} extends ApiClient.Api {
    * building up this map in a fluent style.
    {{#parameters}}
    {{#isNot this 'query-param'}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
    {{/isNot}}
    {{/parameters}}
    * @param queryParams Map of query parameters as name-value pairs
    *   <p>The following elements may be specified in the query map:</p>
    *   <ul>
    {{#queryParams}}
-   *   <li>{{paramName}} - {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}</li>
+   *   <li>{{paramName}} - {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}</li>
    {{/queryParams}}
    *   </ul>
    {{#returnType}}
    * @return {{returnType}}
    {{/returnType}}
+   {{#vendorExtensions.x-is-deprecated}}
+   * @deprecated
+   {{/vendorExtensions.x-is-deprecated}}
    {{#externalDocs}}
    * {{description}}
    * @see <a href="{{url}}">{{summary}} Documentation</a>{{/externalDocs}}
    */
+  {{#vendorExtensions.x-is-deprecated}}
+  @Deprecated
+  {{/vendorExtensions.x-is-deprecated}}
   @RequestLine("{{httpMethod}} {{{path}}}?{{#queryParams}}{{baseName}}={{braces "left"}}{{paramName}}{{braces "right"}}{{#has this 'more'}}&{{/has}}{{/queryParams}}")
   @Headers({
   {{#vendorExtensions.x-contentType}}

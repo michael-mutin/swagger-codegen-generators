@@ -24,7 +24,7 @@ public interface {{classname}} {
    * Sync method
    * {{notes}}
 {{#parameters}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
 {{#returnType}}
    * @return {{returnType}}
@@ -53,9 +53,12 @@ public interface {{classname}} {
    * {{summary}}
    * Async method
 {{#parameters}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
    * @param cb callback method
+{{#vendorExtensions.x-is-deprecated}}
+   * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id~}} } instead{{/vendorExtensions.x-alternative-operation-id}}
+{{/vendorExtensions.x-is-deprecated}}
 {{#externalDocs}}
    * {{description}}
    * @see <a href="{{url}}">{{summary}} Documentation</a>
@@ -72,6 +75,9 @@ public interface {{classname}} {
   {{/@first}}
   {{/formParams}}
   @{{httpMethod}}("{{{path}}}")
+  {{#vendorExtensions.x-is-deprecated}}
+  @Deprecated
+  {{/vendorExtensions.x-is-deprecated}}
   void {{operationId}}(
     {{#parameters}}{{>libraries/retrofit/queryParams}}{{>libraries/retrofit/pathParams}}{{>libraries/retrofit/headerParams}}{{>libraries/retrofit/bodyParams}}{{>libraries/retrofit/formParams}}{{>libraries/retrofit/cookieParams}}, {{/parameters}}Callback<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Object{{/returnType}}> cb
   );

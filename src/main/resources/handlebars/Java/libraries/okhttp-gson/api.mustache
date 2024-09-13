@@ -55,8 +55,12 @@ import java.util.List;
 import java.util.Map;
 {{/fullJavaUtil}}
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 {{#operations}}
 public class {{classname}} {
+    private static final Logger LOGGER = Logger.getLogger({{classname}}.class.getName());
     private ApiClient {{localVariablePrefix}}apiClient;
 
     public {{classname}}() {
@@ -79,31 +83,52 @@ public class {{classname}} {
     {{#contents}}
     /**
      * Build call for {{operationId}}{{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/parameters}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}{{/parameters}}
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
-        {{#externalDocs}}
+     {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id}}Call} instead{{/vendorExtensions.x-alternative-operation-id}}
+     {{/vendorExtensions.x-is-deprecated}}
+     {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
-        {{/externalDocs}}
+     {{/externalDocs}}
      */
+    {{#vendorExtensions.x-is-deprecated}}
+    @Deprecated
+    {{/vendorExtensions.x-is-deprecated}}
     public com.squareup.okhttp.Call {{operationId}}Call({{#parameters}}{{{dataType}}} {{paramName}}, {{/parameters}}final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object {{localVariablePrefix}}localVarPostBody = {{^isForm}}{{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}}{{/isForm}}{{#isForm}}null{{/isForm}};
         
         // create path and map variables
         String {{localVariablePrefix}}localVarPath = "{{{path}}}"{{#pathParams}}
             .replaceAll("\\{" + "{{baseName}}" + "\\}", {{localVariablePrefix}}apiClient.escapeString({{{paramName}}}.toString())){{/pathParams}};
+        {{#pathParams}}
+        {{#deprecated}}
+        LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+        {{/deprecated}}
+        {{/pathParams}}
 
         {{javaUtilPrefix}}List<Pair> {{localVariablePrefix}}localVarQueryParams = new {{javaUtilPrefix}}ArrayList<Pair>();
         {{javaUtilPrefix}}List<Pair> {{localVariablePrefix}}localVarCollectionQueryParams = new {{javaUtilPrefix}}ArrayList<Pair>();{{#queryParams}}
-        if ({{paramName}} != null)
-        {{localVariablePrefix}}{{#collectionFormat}}localVarCollectionQueryParams.addAll({{localVariablePrefix}}apiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll({{localVariablePrefix}}apiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));{{/queryParams}}
+        if ({{paramName}} != null) {
+            {{localVariablePrefix}}{{#collectionFormat}}localVarCollectionQueryParams.addAll({{localVariablePrefix}}apiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll({{localVariablePrefix}}apiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
+            {{#deprecated}}
+            LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+            {{/deprecated}}
+        }
+        {{/queryParams}}
 
         {{javaUtilPrefix}}Map<String, String> {{localVariablePrefix}}localVarHeaderParams = new {{javaUtilPrefix}}HashMap<String, String>();{{#headerParams}}
-        if ({{paramName}} != null)
-        {{localVariablePrefix}}localVarHeaderParams.put("{{baseName}}", {{localVariablePrefix}}apiClient.parameterToString({{paramName}}));{{/headerParams}}
+        if ({{paramName}} != null) {
+            {{localVariablePrefix}}localVarHeaderParams.put("{{baseName}}", {{localVariablePrefix}}apiClient.parameterToString({{paramName}}));
+            {{#deprecated}}
+            LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+            {{/deprecated}}
+        }
+        {{/headerParams}}
 
         {{javaUtilPrefix}}Map<String, Object> {{localVariablePrefix}}localVarFormParams = new {{javaUtilPrefix}}HashMap<String, Object>();
         {{#isForm}}
@@ -190,14 +215,20 @@ public class {{classname}} {
     /**
      * {{summary}}
      * {{notes}}{{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/parameters}}{{#returnType}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}{{/parameters}}{{#returnType}}
      * @return {{returnType}}{{/returnType}}
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        {{#externalDocs}}
+     {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id~}} } instead{{/vendorExtensions.x-alternative-operation-id}}
+     {{/vendorExtensions.x-is-deprecated}}
+     {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
-        {{/externalDocs}}
+     {{/externalDocs}}
      */
+    {{#vendorExtensions.x-is-deprecated}}
+    @Deprecated
+    {{/vendorExtensions.x-is-deprecated}}
     public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#parameters}}{{{dataType}}} {{paramName}}{{#has this 'more'}}, {{/has}}{{/parameters}}) throws ApiException {
         {{#returnType}}ApiResponse<{{{returnType}}}> {{localVariablePrefix}}resp = {{/returnType}}{{operationId}}WithHttpInfo({{#parameters}}{{paramName}}{{#has this 'more'}}, {{/has}}{{/parameters}});{{#returnType}}
         return {{localVariablePrefix}}resp.getData();{{/returnType}}
@@ -206,14 +237,20 @@ public class {{classname}} {
     /**
      * {{summary}}
      * {{notes}}{{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/parameters}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}{{/parameters}}
      * @return ApiResponse&lt;{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Void{{/returnType}}&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-        {{#externalDocs}}
+     {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id}}WithHttpInfo} instead{{/vendorExtensions.x-alternative-operation-id}}
+     {{/vendorExtensions.x-is-deprecated}}
+     {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
-        {{/externalDocs}}
+     {{/externalDocs}}
      */
+    {{#vendorExtensions.x-is-deprecated}}
+    @Deprecated
+    {{/vendorExtensions.x-is-deprecated}}
     public ApiResponse<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{operationId}}WithHttpInfo({{#parameters}}{{#if useBeanValidation}}{{>beanValidationQueryParams}}{{/if}}{{{dataType}}} {{paramName}}{{#has this 'more'}}, {{/has}}{{/parameters}}) throws ApiException {
         com.squareup.okhttp.Call {{localVariablePrefix}}call = {{operationId}}ValidateBeforeCall({{#parameters}}{{paramName}}, {{/parameters}}null, null);
         {{#returnType}}Type {{localVariablePrefix}}localVarReturnType = new TypeToken<{{{returnType}}}>(){}.getType();
@@ -223,15 +260,21 @@ public class {{classname}} {
     /**
      * {{summary}} (asynchronously)
      * {{notes}}{{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/parameters}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}{{/parameters}}
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-        {{#externalDocs}}
+     {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id}}Async} instead{{/vendorExtensions.x-alternative-operation-id}}
+     {{/vendorExtensions.x-is-deprecated}}
+     {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
-        {{/externalDocs}}
+     {{/externalDocs}}
      */
+    {{#vendorExtensions.x-is-deprecated}}
+    @Deprecated
+    {{/vendorExtensions.x-is-deprecated}}
     public com.squareup.okhttp.Call {{operationId}}Async({{#parameters}}{{{dataType}}} {{paramName}}, {{/parameters}}final ApiCallback<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{localVariablePrefix}}callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;

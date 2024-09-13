@@ -12,7 +12,7 @@ import six
 from {{packageName}}.api_client import ApiClient
 
 import warnings
-
+from typing_extensions import deprecated
 
 {{#operations}}
 class {{classname}}(object):
@@ -29,6 +29,9 @@ class {{classname}}(object):
 {{#operation}}
 {{#contents}}
 
+    {{#if ../vendorExtensions.x-is-deprecated}}
+    @deprecated("You are using a deprecated API operation: {{operationId}}.{{#if ../vendorExtensions.x-alternative-operation-id}} Use {{../vendorExtensions.x-alternative-operation-id}} instead.{{/if}}")
+    {{/if}}
     def {{operationId}}(self, {{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs):  # noqa: E501
         """{{#summary}}{{{.}}}{{/summary}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
@@ -45,13 +48,17 @@ class {{classname}}(object):
 {{/sortParamsByRequiredFlag}}
         >>> result = thread.get()
 
-        :param async_req bool
+        :param bool async_req:
 {{#parameters}}
         :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
                  returns the request thread.
+        {{#if ../vendorExtensions.x-is-deprecated}}
+
+        Deprecated.{{#if ../vendorExtensions.x-alternative-operation-id}} Use :meth:`{{../vendorExtensions.x-alternative-operation-id}}` instead.{{/if}}
+        {{/if}}
         """
         all_params = [{{#parameters}}'{{paramName}}'{{#hasMore}}, {{/hasMore}}{{/parameters}}]  # noqa: E501
         all_params.append('async_req')
@@ -94,6 +101,9 @@ class {{classname}}(object):
             (data) = self.{{operationId}}_with_http_info({{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs)  # noqa: E501
             return data
 
+    {{#if ../vendorExtensions.x-is-deprecated}}
+    @deprecated("You are using a deprecated API operation: {{operationId}}_with_http_info.{{#if ../vendorExtensions.x-alternative-operation-id}} Use {{../vendorExtensions.x-alternative-operation-id}}_with_http_info instead.{{/if}}")
+    {{/if}}
     def {{operationId}}_with_http_info(self, {{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs):  # noqa: E501
         """{{#summary}}{{{.}}}{{/summary}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
@@ -110,13 +120,17 @@ class {{classname}}(object):
 {{/sortParamsByRequiredFlag}}
         >>> result = thread.get()
 
-        :param async_req bool
+        :param bool async_req:
 {{#parameters}}
         :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/optional}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
                  returns the request thread.
+        {{#if ../vendorExtensions.x-is-deprecated}}
+
+        Deprecated.{{#if ../vendorExtensions.x-alternative-operation-id}} Use :meth:`{{../vendorExtensions.x-alternative-operation-id}}_with_http_info` instead.{{/if}}
+        {{/if}}
         """
 
         all_params = [{{#parameters}}'{{paramName}}'{{#hasMore}}, {{/hasMore}}{{/parameters}}]  # noqa: E501

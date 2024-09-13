@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;{{/fullJavaUtil}}
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -29,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 @Component("{{package}}.{{classname}}")
 {{#operations}}
 public class {{classname}} {
+    private static final Logger LOGGER = Logger.getLogger({{classname}}.class.getName());
     private ApiClient {{localVariablePrefix}}apiClient;
 
     public {{classname}}() {
@@ -57,20 +61,23 @@ public class {{classname}} {
      * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
     {{/responses}}
     {{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
     {{/parameters}}
     {{#returnType}}
      * @return {{returnType}}
     {{/returnType}}
      * @throws RestClientException if an error occurs while attempting to invoke the API
+    {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id~}} } instead{{/vendorExtensions.x-alternative-operation-id}}
+    {{/vendorExtensions.x-is-deprecated}}
     {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
     {{/externalDocs}}
      */
-    {{#isDeprecated}}
+    {{#vendorExtension.x-is-enum}}
     @Deprecated
-    {{/isDeprecated}}
+    {{/vendorExtension.x-is-enum}}
     public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#parameters}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}}) throws RestClientException {
         {{#returnType}}
         return {{operationId}}WithHttpInfo({{#parameters}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}}).getBody();
@@ -87,18 +94,21 @@ public class {{classname}} {
      * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
      {{/responses}}
      {{#parameters}}
-     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
      {{/parameters}}
      * @return ResponseEntity&lt;{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Void{{/returnType}}&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
+     {{#vendorExtensions.x-is-deprecated}}
+     * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id}}WithHttpInfo} instead{{/vendorExtensions.x-alternative-operation-id}}
+     {{/vendorExtensions.x-is-deprecated}}
      {{#externalDocs}}
      * {{description}}
      * @see <a href="{{url}}">{{summary}} Documentation</a>
      {{/externalDocs}}
      */
-    {{#isDeprecated}}
+    {{#vendorExtension.x-is-enum}}
     @Deprecated
-    {{/isDeprecated}}
+    {{/vendorExtension.x-is-enum}}
     public ResponseEntity<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{operationId}}WithHttpInfo({{#parameters}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}}) throws RestClientException {
         Object {{localVariablePrefix}}postBody = {{^isForm}}{{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}}{{/isForm}}{{#isForm}}null{{/isForm}};
         {{#parameters}}
@@ -114,6 +124,9 @@ public class {{classname}} {
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         {{#pathParams}}
         uriVariables.put("{{baseName}}", {{{paramName}}});
+        {{#deprecated}}
+        LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+        {{/deprecated}}
         {{/pathParams}}
         {{/hasPathParams}}
         String {{localVariablePrefix}}path = UriComponentsBuilder.fromPath("{{{path}}}"){{#hasPathParams}}.buildAndExpand(uriVariables){{/hasPathParams}}{{^hasPathParams}}.build(){{/hasPathParams}}.toUriString();
@@ -124,12 +137,21 @@ public class {{classname}} {
         {{#hasQueryParams}}
         {{#queryParams}}
         {{localVariablePrefix}}queryParams.putAll({{localVariablePrefix}}apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}));
+        {{#deprecated}}
+        if ({{paramName}} != null) {
+        LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+        }
+        {{/deprecated}}
         {{/queryParams}}
         {{/hasQueryParams}}
         {{#hasHeaderParams}}
         {{#headerParams}}
-        if ({{paramName}} != null)
+        if ({{paramName}} != null) {
             {{localVariablePrefix}}headerParams.add("{{baseName}}", {{localVariablePrefix}}apiClient.parameterToString({{paramName}}));
+            {{#deprecated}}
+            LOGGER.log(Level.WARNING, "The API operation '{{../operationId}}' received a deprecated parameter '{{paramName}}'");
+            {{/deprecated}}
+        }
         {{/headerParams}}
         {{/hasHeaderParams}}
         {{#hasFormParams}}

@@ -30,10 +30,16 @@ public interface {{classname}} {
    * {{summary}}
    * {{notes}}
 {{#parameters}}
-   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
    * @return Call&lt;{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Void{{/returnType}}&gt;
+{{#vendorExtensions.x-is-deprecated}}
+   * @deprecated {{#vendorExtensions.x-alternative-operation-id}}Use {@link #{{vendorExtensions.x-alternative-operation-id~}} } instead{{/vendorExtensions.x-alternative-operation-id}}
+{{/vendorExtensions.x-is-deprecated}}
    */
+  {{#vendorExtensions.x-is-deprecated}}
+  @Deprecated
+  {{/vendorExtensions.x-is-deprecated}}
   {{#formParams}}
   {{#@first}}
   {{#isMultipart}}@retrofit2.http.Multipart{{/isMultipart}}{{^isMultipart}}@retrofit2.http.FormUrlEncoded{{/isMultipart}}
