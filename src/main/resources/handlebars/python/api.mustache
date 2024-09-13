@@ -45,12 +45,46 @@ class {{classname}}(object):
 
         :param async_req bool
 {{#parameters}}
-        :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
+        :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
                  returns the request thread.
         """
+        all_params = [{{#parameters}}'{{paramName}}'{{#hasMore}}, {{/hasMore}}{{/parameters}}]  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method {{operationId}}" % key
+                )
+            params[key] = val
+        del params['kwargs']
+{{#pathParams}}
+        {{#deprecated}}
+        if '{{paramName}}' in params:
+            warnings.warn(f"The API operation '{{operationId}}' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+        {{/deprecated}} 
+{{/pathParams}}
+{{#queryParams}}
+        {{#deprecated}}
+        if '{{paramName}}' in params:
+            warnings.warn(f"The API operation '{{operationId}}' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+        {{/deprecated}}            
+{{/queryParams}}
+{{#headerParams}}
+        {{#deprecated}}
+        if '{{paramName}}' in params:
+            warnings.warn(f"The API operation '{{operationId}}' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+        {{/deprecated}}
+{{/headerParams}}
+
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
             return self.{{operationId}}_with_http_info({{#sortParamsByRequiredFlag}}{{#parameters}}{{#required}}{{paramName}}, {{/required}}{{/parameters}}{{/sortParamsByRequiredFlag}}**kwargs)  # noqa: E501
@@ -76,7 +110,7 @@ class {{classname}}(object):
 
         :param async_req bool
 {{#parameters}}
-        :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/optional}}
+        :param {{dataType}} {{paramName}}:{{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/optional}}{{#deprecated}} (deprecated){{/deprecated}}
 {{/parameters}}
         :return: {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}None{{/returnType}}
                  If the method is called asynchronously,
@@ -152,6 +186,9 @@ class {{classname}}(object):
         if '{{paramName}}' in params:
             path_params['{{baseName}}'] = params['{{paramName}}']{{#isListContainer}}  # noqa: E501
             collection_formats['{{baseName}}'] = '{{collectionFormat}}'{{/isListContainer}}  # noqa: E501
+            {{#deprecated}}
+            warnings.warn(f"The API operation '{{operationId}}_with_http_info' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+            {{/deprecated}} 
 {{/pathParams}}
 
         query_params = []
@@ -159,6 +196,9 @@ class {{classname}}(object):
         if '{{paramName}}' in params:
             query_params.append(('{{baseName}}', params['{{paramName}}'])){{#isListContainer}}  # noqa: E501
             collection_formats['{{baseName}}'] = '{{collectionFormat}}'{{/isListContainer}}  # noqa: E501
+            {{#deprecated}}
+            warnings.warn(f"The API operation '{{operationId}}_with_http_info' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+            {{/deprecated}}            
 {{/queryParams}}
 
         header_params = {}
@@ -166,6 +206,9 @@ class {{classname}}(object):
         if '{{paramName}}' in params:
             header_params['{{baseName}}'] = params['{{paramName}}']{{#isListContainer}}  # noqa: E501
             collection_formats['{{baseName}}'] = '{{collectionFormat}}'{{/isListContainer}}  # noqa: E501
+            {{#deprecated}}
+            warnings.warn(f"The API operation '{{operationId}}_with_http_info' received a deprecated parameter '{{{paramName}}}'", DeprecationWarning, stacklevel=2) # noqa: E501
+            {{/deprecated}}
 {{/headerParams}}
 
         form_params = []
