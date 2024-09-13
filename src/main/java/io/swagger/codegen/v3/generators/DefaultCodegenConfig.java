@@ -36,6 +36,7 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -2027,6 +2028,68 @@ public abstract class DefaultCodegenConfig implements CodegenConfig {
         codegenOperation.getVendorExtensions().put(CodegenConstants.HAS_PRODUCES_EXT_NAME, Boolean.FALSE);
         if (operation.getDeprecated() != null) {
             codegenOperation.getVendorExtensions().put(CodegenConstants.IS_DEPRECATED_EXT_NAME, operation.getDeprecated());
+        }
+
+        final String altOpFieldName = "x-alternative-operation";
+        Object altOpObj = null;;
+        if (operation.getExtensions() != null) {
+            altOpObj = operation.getExtensions().get(altOpFieldName);
+        }
+        if (altOpObj != null && altOpObj instanceof String) {
+            String alternativeOperation = (String) altOpObj;
+            // Format: #/paths/{path}/{operation}
+            String operationRefRegex = "#/paths(/.*)/(get|put|post|delete|options|head|patch|trace)";
+            Pattern operationRefPattern = Pattern.compile(operationRefRegex);
+            Matcher operationRefMatcher = operationRefPattern.matcher(alternativeOperation);
+            if (operationRefMatcher.matches()) {
+                String altOpPathname = operationRefMatcher.group(1);
+                String altOpHttpMethod = operationRefMatcher.group(2);
+                PathItem altOpPathItem = openAPI.getPaths().get(altOpPathname);
+                if (altOpPathItem != null) {
+                    Operation altOpOperation;
+
+                    switch (altOpHttpMethod) {
+                        case "get":
+                            altOpOperation = altOpPathItem.getGet();
+                            break;
+                        case "put":
+                            altOpOperation = altOpPathItem.getPut();
+                            break;
+                        case "post":
+                            altOpOperation = altOpPathItem.getPost();
+                            break;
+                        case "delete":
+                            altOpOperation = altOpPathItem.getDelete();
+                            break;
+                        case "options":
+                            altOpOperation = altOpPathItem.getOptions();
+                            break;
+                        case "head":
+                            altOpOperation = altOpPathItem.getHead();
+                            break;
+                        case "patch":
+                            altOpOperation = altOpPathItem.getPatch();
+                            break;
+                        default:
+                            altOpOperation = null;
+                            break;
+                    }
+                    if (altOpOperation != null) {
+                        String altOpId = getOrGenerateOperationId(altOpOperation, altOpPathname, altOpHttpMethod);
+                        // remove prefix in operationId
+                        if (removeOperationIdPrefix) {
+                            int offset = altOpId.indexOf('_');
+                            if (offset > -1) {
+                                altOpId = altOpId.substring(offset + 1);
+                            }
+                        }
+                        altOpId = removeNonNameElementToCamelCase(altOpId);
+                        altOpId = toOperationId(altOpId);
+                        final String altOpIdFieldName = "x-alternative-operation-id";
+                        codegenOperation.getVendorExtensions().put(altOpIdFieldName, altOpId);
+                    }
+                }
+            }
         }
 
         addConsumesInfo(operation, codegenOperation, openAPI);
